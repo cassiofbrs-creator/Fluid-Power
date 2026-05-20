@@ -14,7 +14,8 @@
   <div class="container">
 
     <header>
-      <h1>Calculadora de Vazão Hidráulica</h1>
+      <h1>Orifice Flow Calculator</h1>
+      <a href="teste.html">Ir para a página Sobre</a>
       <p>Ferramenta profissional para cálculos hidráulicos</p>
     </header>
 
@@ -79,7 +80,32 @@
 
   </div>
 
-  <script src="script.js"></script>
+ <script>
+    function calculateFlow() {
+
+      const diameter =
+        parseFloat(document.getElementById("diameter").value);
+
+      const velocity =
+        parseFloat(document.getElementById("velocity").value);
+
+      const diameterMeters = diameter / 1000;
+
+      const area =
+        Math.PI * Math.pow(diameterMeters / 2, 2);
+
+      const flowM3s = area * velocity;
+
+      const flowLMin = flowM3s * 1000 * 60;
+
+      document.getElementById("result").innerHTML =
+        flowLMin.toFixed(2);
+    }
+
+    calculateFlow();
+</script>
 
 </body>
+
+
 </html>

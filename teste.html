@@ -1,0 +1,250 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Orifice Flow Calculator</title>
+
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+  <div class="container">
+
+    <h1>Orifice Flow Calculator</h1>
+
+    <div class="formula">
+      Q = (π · d² / 4) · Cd · √(2 · ΔP / ρ)
+    </div>
+
+    <div class="group">
+      <label>Variável a calcular</label>
+      <select id="calcType">
+        <option value="Q">Q (Vazão)</option>
+        <option value="d">d (Diâmetro)</option>
+        <option value="dp">ΔP (Pressão)</option>
+      </select>
+    </div>
+
+    <div class="group">
+      <label>Q</label>
+      <div class="input-row">
+        <input type="number" id="q" step="any">
+        <select id="qUnit">
+          <option value="LPM">LPM</option>
+          <option value="GPM">GPM</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="group">
+      <label>d</label>
+      <div class="input-row">
+        <input type="number" id="d" step="any">
+        <select id="dUnit">
+          <option value="mm">mm</option>
+          <option value="in">in</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="group">
+      <label>ΔP</label>
+      <div class="input-row">
+        <input type="number" id="dp" step="any">
+        <select id="dpUnit">
+          <option value="bar">bar</option>
+          <option value="psi">PSI</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="group">
+      <label>Cd</label>
+      <input type="number" id="cd" value="0.61" step="any">
+    </div>
+
+    <div class="group">
+      <label>ρ</label>
+      <input type="number" id="rho" value="0.88" step="any">
+    </div>
+
+    <button onclick="calcular()">Calcular</button>
+
+    <div class="resultado" id="resultado">
+      Resultado aparecerá aqui
+    </div>
+
+  </div>
+
+  <script>
+
+    const calcType = document.getElementById("calcType");
+
+    const qInput = document.getElementById("q");
+    const dInput = document.getElementById("d");
+    const dpInput = document.getElementById("dp");
+
+    function atualizarCampos(){
+
+      qInput.disabled = false;
+      dInput.disabled = false;
+      dpInput.disabled = false;
+
+      qInput.classList.remove("disabled");
+      dInput.classList.remove("disabled");
+      dpInput.classList.remove("disabled");
+
+      if(calcType.value === "Q"){
+        qInput.disabled = true;
+        qInput.classList.add("disabled");
+        qInput.value = "";
+      }
+
+      if(calcType.value === "d"){
+        dInput.disabled = true;
+        dInput.classList.add("disabled");
+        dInput.value = "";
+      }
+
+      if(calcType.value === "dp"){
+        dpInput.disabled = true;
+        dpInput.classList.add("disabled");
+        dpInput.value = "";
+      }
+
+    }
+
+    calcType.addEventListener("change", atualizarCampos);
+
+    atualizarCampos();
+
+    function calcular(){
+
+      let Q = parseFloat(qInput.value);
+      let d = parseFloat(dInput.value);
+      let dp = parseFloat(dpInput.value);
+
+      const Cd = parseFloat(document.getElementById("cd").value);
+      const rho = parseFloat(document.getElementById("rho").value);
+
+      const qUnit = document.getElementById("qUnit").value;
+      const dUnit = document.getElementById("dUnit").value;
+      const dpUnit = document.getElementById("dpUnit").value;
+
+      // ===== CONVERSÕES =====
+
+      // Q -> m³/s
+      if(qUnit === "LPM" && !isNaN(Q)){
+        Q = Q / 1000 / 60;
+      }
+
+      if(qUnit === "GPM" && !isNaN(Q)){
+        Q = Q * 0.00006309;
+      }
+
+      // d -> m
+      if(dUnit === "mm" && !isNaN(d)){
+        d = d / 1000;
+      }
+
+      if(dUnit === "in" && !isNaN(d)){
+        d = d * 0.0254;
+      }
+
+      // dp -> Pa
+      if(dpUnit === "bar" && !isNaN(dp)){
+        dp = dp * 100000;
+      }
+
+      if(dpUnit === "psi" && !isNaN(dp)){
+        dp = dp * 6894.76;
+      }
+
+      let resultado;
+
+      // =========================
+      // CALCULAR Q
+      // =========================
+
+      if(calcType.value === "Q"){
+
+        resultado = ((Math.PI * Math.pow(d,2)) / 4) *
+                    Cd *
+                    Math.sqrt((2 * dp) / rho);
+
+        // m³/s -> unidade selecionada
+        if(qUnit === "LPM"){
+          resultado = resultado * 1000 * 60;
+        }
+
+        if(qUnit === "GPM"){
+          resultado = resultado / 0.00006309;
+        }
+
+        qInput.value = resultado.toFixed(3);
+
+        document.getElementById("resultado").innerHTML =
+          "Q = " + resultado.toFixed(3) + " " + qUnit;
+      }
+
+      // =========================
+      // CALCULAR d
+      // =========================
+
+      if(calcType.value === "d"){
+
+        resultado = Math.sqrt(
+          (4 * Q) /
+          (Math.PI * Cd * Math.sqrt((2 * dp)/rho))
+        );
+
+        if(dUnit === "mm"){
+          resultado = resultado * 1000;
+        }
+
+        if(dUnit === "in"){
+          resultado = resultado / 0.0254;
+        }
+
+        dInput.value = resultado.toFixed(3);
+
+        document.getElementById("resultado").innerHTML =
+          "d = " + resultado.toFixed(3) + " " + dUnit;
+      }
+
+      // =========================
+      // CALCULAR ΔP
+      // =========================
+
+      if(calcType.value === "dp"){
+
+        resultado =
+          (
+            Math.pow(
+              Q / (((Math.PI * Math.pow(d,2))/4) * Cd),
+              2
+            ) * rho
+          ) / 2;
+
+        if(dpUnit === "bar"){
+          resultado = resultado / 100000;
+        }
+
+        if(dpUnit === "psi"){
+          resultado = resultado / 6894.76;
+        }
+
+        dpInput.value = resultado.toFixed(3);
+
+        document.getElementById("resultado").innerHTML =
+          "ΔP = " + resultado.toFixed(3) + " " + dpUnit;
+      }
+
+    }
+
+  </script>
+
+</body>
+</html>
