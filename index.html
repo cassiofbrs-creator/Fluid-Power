@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calculadora de Vazão Hidráulica</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+
+    <header>
+      <h1>Calculadora de Vazão Hidráulica</h1>
+      <p>Ferramenta profissional para cálculos hidráulicos</p>
+    </header>
+
+    <div class="grid">
+
+      <div class="card">
+        <h2>Dados da Tubulação</h2>
+
+        <label>Diâmetro do tubo (mm)</label>
+        <input type="number" id="diameter" value="50">
+
+        <label>Velocidade do fluido (m/s)</label>
+        <input type="number" id="velocity" value="2">
+
+        <button onclick="calculateFlow()">
+          Calcular Vazão
+        </button>
+      </div>
+
+      <div class="result-card">
+        <h2>Resultado</h2>
+
+        <div id="result">
+          0.00
+        </div>
+
+        <p>litros/minuto</p>
+      </div>
+
+    </div>
+
+    <section class="formula">
+      <h2>Fórmula Utilizada</h2>
+
+      <div class="formula-box">
+        Q = A × V
+      </div>
+
+      <p>
+        A vazão hidráulica é calculada utilizando a área interna da tubulação e a velocidade do fluido.
+      </p>
+    </section>
+
+    <section class="adsense">
+      <h2>Google AdSense</h2>
+
+      <p>
+        Cole aqui o código do Google AdSense para monetização.
+      </p>
+    </section>
+
+  </div>
+
+  <script src="script.js"></script>
+
+</body>
+</html>
